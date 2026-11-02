@@ -1,0 +1,49 @@
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Database
+*.db
+*.sqlite3
+*.db-wal
+*.db-shm
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Audio / Uploads / Case Records / Generated PDFs
+audio/
+case_records/
+generated/
+
+# Migration Manifest & Scratch Artifacts
+migration_manifest.json
+scratch/
+
+# Playwright
+test-results/
+playwright-report/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.swp
+
+# Backups & Session files
+_backup_pre_refactor/
+backup/
+backups/
+.flask_session/

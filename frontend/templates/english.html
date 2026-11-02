@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Complaint (English) - Case {{ case_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/complaint.css') }}">
+    <style>
+        .case-footer {
+            position: fixed;
+            bottom: 15px;
+            left: 30px;
+            font-size: 11px;
+            color: black;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 20mm;
+            }
+
+            .case-footer {
+                position: fixed;
+                bottom: 15px;
+                left: 30px;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            .paper {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: auto !important;
+                min-height: auto !important;
+            }
+
+            .buttons {
+                display: none !important;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 12mm;
+        }
+
+        body {
+            margin: 0;
+            padding: 15px;
+            background: #bdbdbd;
+            font-family: Arial, sans-serif;
+        }
+
+        .paper {
+            width: 200mm;
+            min-height: 285mm;
+            background: white;
+            margin: auto;
+            padding: 12mm 15mm;
+            box-sizing: border-box;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        .top-right {
+            text-align: right;
+            line-height: 1.5;
+        }
+
+        .station {
+            margin-top: 8mm;
+            line-height: 1.7;
+        }
+
+        .subject {
+            margin-top: 5mm;
+            text-align: center;
+            font-weight: bold;
+            font-size: 21px;
+        }
+
+        .sir {
+            margin-top: 5mm;
+            font-weight: bold;
+        }
+
+        .body {
+            margin-top: 1mm;
+            text-align: justify;
+            line-height: 1.8;
+            text-indent: 3em;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .signature {
+            margin-top: 10mm;
+            text-align: right;
+            line-height: 1.7;
+        }
+
+        .buttons {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 5px;
+            background: black;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body class="complaint-view complaint-english">
+
+    <div class="paper">
+        <div class="top-right">
+            Date: {{ current_date }}<br>
+            {{ place }}, {{ district }}
+        </div>
+
+        <div class="station">
+            To,<br>
+            The Sub Inspector,<br>
+            {{ station_name }},<br>
+            {{ place }},<br>
+            {{ district }}
+        </div>
+
+        <div class="subject">
+            Subject: {{ subject }}
+        </div>
+
+        <div class="sir">
+            Respected Sir,
+        </div>
+
+        <div class="body">{{ english }}</div>
+
+        <div class="signature">
+            Yours faithfully,<br>
+            {{ complainant_name }}<br>
+            Phone: {{ phone_number }}
+        </div>
+
+        <div class="buttons">
+            <button class="btn" onclick="window.print()">
+                Download English PDF
+            </button>
+            <a class="btn" href="/">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="case-footer">
+        Case ID : {{ case_name }}
+    </div>
+
+</body>
+</html>

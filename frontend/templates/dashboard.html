@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h1 style="margin: 0; text-align: left;">AI Police Complaint Drafting System</h1>
+            <div class="auth-status" style="display: flex; align-items: center; gap: 12px;">
+                {% if current_officer %}
+                <span style="font-size: 14px;">
+                    <strong>{{ current_officer.full_name }}</strong>
+                    {% if current_officer.badge_number %}<span>(#{{ current_officer.badge_number }})</span>{% endif %}
+                    <span style="display: inline-block; padding: 2px 8px; background: #333; color: #fff; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase;">{{ current_officer.role }}</span>
+                </span>
+                <form method="POST" action="{{ url_for('auth.logout') }}" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn" style="background: #c53030; padding: 6px 12px; font-size: 13px;">Logout</button>
+                </form>
+                {% else %}
+                <a class="btn" href="{{ url_for('auth.login') }}" style="padding: 6px 14px; font-size: 13px;">Officer Login</a>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="nav-buttons" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            {% if has_permission(current_officer, 'create_complaint') %}
+            <a class="btn" href="/record">Record Complaint</a>
+            {% endif %}
+            {% if has_permission(current_officer, 'manage_settings') %}
+            <a class="btn" href="/settings">Location Settings</a>
+            {% endif %}
+            {% if has_permission(current_officer, 'manage_officers') %}
+            <a class="btn" href="{{ url_for('admin.list_officers') }}" style="background: #1e3a8a;">Manage Officers</a>
+            {% endif %}
+            {% if has_permission(current_officer, 'view_audit_logs') %}
+            <a class="btn" href="{{ url_for('admin.audit_logs') }}" style="background: #374151;">Audit Logs</a>
+            {% endif %}
+            {% if current_officer and current_officer.role == 'viewer' %}
+            <span style="font-size: 13px; color: #4b5563; font-style: italic; padding: 6px 12px; background: #f3f4f6; border-radius: 4px; border: 1px dashed #9ca3af;">Viewer Mode: Read-Only Access</span>
+            {% endif %}
+        </div>
+        <hr>
+
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-title">Total Cases</span>
+                <span class="stat-count">{{ "%02d"|format(total_cases) }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">Today's Cases</span>
+                <span class="stat-count">{{ "%02d"|format(today_cases) }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">This Month</span>
+                <span class="stat-count">{{ "%02d"|format(month_cases) }}</span>
+            </div>
+        </div>
+
+        <h2>Generated Complaints</h2>
+
+        {% if complaints %}
+        <input type="text" id="searchInput" placeholder="Search by Case ID, Name, Phone or Subject..."
+            onkeyup="searchTable()">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complaint in complaints %}
+                <tr>
+                    <td>{{ complaint[0] }}</td>
+                    <td>{{ complaint[1].split(" ")[0] }}</td>
+                    <td>{{ complaint[1].split(" ")[1] }} {{ complaint[1].split(" ")[2] }}</td>
+                    <td>{{ complaint[2] }}</td>
+                    <td>{{ complaint[4] }}</td>
+                    <td>{{ complaint[5] }}</td>
+                    <td class="table-actions">
+                        <button class="btn"
+                            onclick="playAudio('{{ url_for('serve_case_audio', filepath=complaint[0]) }}')">
+                            ▶ Audio
+                        </button>
+                        <a class="btn" href="/view_telugu/{{ complaint[0] }}">
+                            📄 Telugu
+                        </a>
+                        <a class="btn" href="/view_english/{{ complaint[0] }}">
+                            📄 English
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No complaints generated yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Complaint Audio Playback Modal -->
+    <div id="audioModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAudio()">&times;</span>
+            <h3>Complaint Audio</h3>
+            <audio id="audioPlayer" controls style="width:100%;">
+            </audio>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+
+</html>

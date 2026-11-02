@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Officer - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <style>
+        .form-container {
+            max-width: 550px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #9ca3af;
+            border-radius: 5px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .policy-note {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>AI Police Complaint Drafting System</h1>
+        <hr>
+        <div class="nav-buttons">
+            <a class="btn" href="{{ url_for('admin.list_officers') }}">← Back to Officer List</a>
+            <a class="btn" href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+        </div>
+        <hr>
+
+        <div class="form-container">
+            <h2 style="margin-top: 0;">Provision New Officer Account</h2>
+
+            {% if error %}
+            <div class="alert-error" role="alert">
+                ⚠️ {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('admin.create_officer') }}" autocomplete="off">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" class="form-control" required autofocus placeholder="e.g. jsmith">
+                    <div class="policy-note">Case-insensitive unique identifier (min 3 chars).</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="full_name">Full Name & Rank *</label>
+                    <input type="text" id="full_name" name="full_name" class="form-control" required placeholder="e.g. Sub-Inspector J. Smith">
+                </div>
+
+                <div class="form-group">
+                    <label for="badge_number">Badge / Police ID Number</label>
+                    <input type="text" id="badge_number" name="badge_number" class="form-control" placeholder="e.g. AP-POL-8402 (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Assigned Role *</label>
+                    <select id="role" name="role" class="form-control" required>
+                        {% for r in allowed_roles %}
+                        <option value="{{ r }}" {% if r == 'officer' %}selected{% endif %}>
+                            {{ r|upper }} - {% if r == 'admin' %}Full system & personnel administration{% elif r == 'officer' %}Record, draft & process complaints{% else %}Read-only viewing of complaints & records{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Initial Password *</label>
+                    <input type="password" id="password" name="password" class="form-control" required autocomplete="new-password">
+                    <div class="policy-note">Requires min 8 characters with uppercase, lowercase, digit, and special symbol.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password *</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" required autocomplete="new-password">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button type="submit" class="btn" style="background: #15803d; flex: 1;">Create Account</button>
+                    <a class="btn" href="{{ url_for('admin.list_officers') }}" style="background: #6b7280;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+

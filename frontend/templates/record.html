@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Complaint - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/record.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <h1 style="margin: 0; text-align: left;">AI Police Complaint Drafting System</h1>
+        <div class="auth-status" style="display: flex; align-items: center; gap: 12px;">
+            {% if current_officer %}
+            <span style="font-size: 14px;">
+                <strong>{{ current_officer.full_name }}</strong>
+                {% if current_officer.badge_number %}<span>(#{{ current_officer.badge_number }})</span>{% endif %}
+                <span style="display: inline-block; padding: 2px 8px; background: #333; color: #fff; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase;">{{ current_officer.role }}</span>
+            </span>
+            <form method="POST" action="{{ url_for('auth.logout') }}" style="display: inline; margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn" style="background: #c53030; padding: 6px 12px; font-size: 13px;">Logout</button>
+            </form>
+            {% else %}
+            <a class="btn" href="{{ url_for('auth.login') }}" style="padding: 6px 14px; font-size: 13px;">Officer Login</a>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    <div class="nav-buttons" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <a class="btn" href="/">Dashboard</a>
+        {% if has_permission(current_officer, 'manage_settings') %}
+        <a class="btn" href="/settings">Location Settings</a>
+        {% endif %}
+    </div>
+    <hr>
+
+    <form action="/process" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="complainant_name"><b>Complainant Name</b></label>
+        <input type="text" id="complainant_name" name="complainant_name" required placeholder="Enter complainant name (e.g., Ravi Kumar)">
+
+        <br><br>
+
+        <label for="phone_number"><b>Phone Number</b></label>
+        <input type="text" id="phone_number" name="phone_number" required placeholder="Enter 10-digit mobile number">
+
+        <div class="section">
+            <h3>Choose Audio Input</h3>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="mode" value="record" checked onclick="showRecord()">
+                    Live Recording
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="mode" value="upload" onclick="showUpload()">
+                    Upload Audio File
+                </label>
+            </div>
+        </div>
+
+        <div id="recordSection" class="section">
+            <button type="button" class="action-btn" onclick="startRecording()">
+                🎤 Start Recording
+            </button>
+            <button type="button" class="action-btn" onclick="stopRecording()">
+                ⏹ Stop Recording
+            </button>
+            <div class="status" id="status">Not Recording</div>
+            <div class="timer" id="timer">00:00</div>
+            <audio id="player" controls></audio>
+        </div>
+
+        <div id="uploadSection" class="section">
+            <label for="audio">Select Audio File (WEBM, WAV, MP3, M4A, OGG, FLAC, MP4):</label>
+            <input type="file" id="audio" name="audio" accept=".webm,.wav,.mp3,.m4a,.ogg,.opus,.flac,.mp4">
+        </div>
+
+        <input type="file" id="recordedAudio" name="recorded_audio" hidden>
+
+        <br>
+        <button type="submit">Generate Complaint</button>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/record.js') }}"></script>
+</body>
+</html>

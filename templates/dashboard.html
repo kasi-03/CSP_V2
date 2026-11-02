@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Dashboard</title>
+
+    <style>
+        .stats{
+
+            display:flex;
+
+            gap:15px;
+
+            margin:20px 0 25px;
+
+        }
+
+        .stat-card{
+
+            flex:1;
+
+            background:#fff;
+
+            border:1.5px solid #444;
+
+            border-radius:8px;
+
+            padding:12px 18px;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            transition:.2s ease;
+
+        }
+
+        .stat-card:hover{
+
+            border-color:#000;
+
+            box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+            transform:translateY(-1px);
+
+        }
+
+        .stat-title{
+
+            font-size:18px;
+
+            font-weight:600;
+
+            color:#222;
+
+        }
+
+        .stat-count{
+
+            min-width:46px;
+
+            height:36px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            border:2px solid #222;
+
+            border-radius:4px;
+
+            background: #ececec;;
+
+            font-size:22px;
+
+            font-weight:700;
+
+            color:#000;
+
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.8),
+                0 1px 2px rgba(0,0,0,.15);
+
+            letter-spacing:1px;
+
+        }
+        #searchInput{
+
+            width:100%;
+
+            padding:12px;
+
+            margin-bottom:20px;
+
+            border:1px solid #ccc;
+
+            border-radius:6px;
+
+            font-size:16px;
+
+            box-sizing:border-box;
+
+        }
+
+        .btn{
+
+            display:inline-block;
+
+            width:110px;
+
+            padding:8px 14px;
+
+            text-align:center;
+
+            background:black;
+
+            color:white;
+
+            border-radius:5px;
+
+            margin:3px;
+
+            text-decoration:none;
+
+            border:none;
+
+            cursor:pointer;
+
+        }
+        
+        .modal{
+
+            display:none;
+
+            position:fixed;
+
+            z-index:1000;
+
+            left:0;
+
+            top:0;
+
+            width:100%;
+
+            height:100%;
+
+            background:rgba(0,0,0,0.45);
+
+        }
+
+        .modal-content{
+
+            background:white;
+
+            width:420px;
+
+            margin:10% auto;
+
+            padding:25px;
+
+            border-radius:10px;
+
+            box-shadow:0 0 20px rgba(0,0,0,.3);
+
+        }
+
+        .close{
+
+            float:right;
+
+            font-size:30px;
+
+            cursor:pointer;
+
+        }
+        body{
+
+            font-family: Arial, sans-serif;
+
+            margin:40px;
+
+            background:#f5f5f5;
+        }
+
+        .container{
+
+            background:white;
+
+            padding:30px;
+
+            border-radius:10px;
+
+            box-shadow:0px 0px 10px rgba(0,0,0,0.2);
+        }
+
+        h1{
+
+            text-align:center;
+        }
+
+        a{
+
+            text-decoration:none;
+        }
+
+        table{
+
+            width:100%;
+
+            border-collapse:collapse;
+
+            margin-top:20px;
+        }
+
+        th{
+
+            background:#e0e0e0;
+        }
+
+        th,td{
+
+            border:1px solid black;
+
+            padding:10px;
+
+            text-align:left;
+
+            vertical-align:middle;
+        }
+
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>
+
+AI Police Complaint Drafting System
+
+</h1>
+
+<hr>
+
+<a
+class="btn"
+href="/record"
+>
+
+Record Complaint
+
+</a>
+
+<a
+class="btn"
+href="/settings"
+>
+
+Location Settings
+
+</a>
+
+<hr>
+
+<div class="stats">
+
+    <div class="stat-card">
+
+        <span class="stat-title">
+            Total Cases
+        </span>
+
+        <span class="stat-count">
+            {{ "%02d"|format(total_cases) }}
+        </span>
+
+    </div>
+
+    <div class="stat-card">
+
+        <span class="stat-title">
+            Today's Cases
+        </span>
+
+        <span class="stat-count">
+            {{ "%02d"|format(today_cases) }}
+        </span>
+
+    </div>
+
+    <div class="stat-card">
+
+        <span class="stat-title">
+            This Month
+        </span>
+
+        <span class="stat-count">
+            {{ "%02d"|format(month_cases) }}
+        </span>
+
+    </div>
+
+</div>
+
+<h2>
+
+Generated Complaints
+
+</h2>
+
+{% if complaints %}
+
+<input
+    type="text"
+    id="searchInput"
+    placeholder="Search by Case ID, Name, Phone or Subject..."
+    onkeyup="searchTable()"
+>
+
+<table>
+
+<tr>
+
+<th>ID</th>
+<th>Date</th>
+<th>Time</th>
+<th>Name</th>
+<th>Phone</th>
+<th>Subject</th>
+<th>Actions</th>
+
+</tr>
+
+{% for complaint in complaints %}
+
+<tr>
+
+<td>{{ complaint[0] }}</td>
+
+<td>{{ complaint[1].split(" ")[0] }}</td>
+
+<td>{{ complaint[1].split(" ")[1] }} {{ complaint[1].split(" ")[2] }}</td>
+
+<td>{{ complaint[2] }}</td>
+
+<td>{{ complaint[4] }}</td>
+
+<td>{{ complaint[5] }}</td>
+
+<td>
+
+<button
+class="btn"
+onclick="playAudio('{{ url_for('serve_case_audio', filepath=complaint[6].replace("\\", "/")) }}')">
+▶ Audio
+</button>
+
+<a
+class="btn"
+href="/view_telugu/{{ complaint[0] }}"
+>
+📄 Telugu
+</a>
+
+<a
+class="btn"
+href="/view_english/{{ complaint[0] }}"
+>
+📄 English
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% else %}
+
+<p>
+
+No complaints generated yet.
+
+</p>
+
+{% endif %}
+
+</div>
+<div id="audioModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeAudio()">&times;</span>
+
+        <h3>Complaint Audio</h3>
+
+        <audio
+            id="audioPlayer"
+            controls
+            style="width:100%;"
+        >
+        </audio>
+
+    </div>
+
+</div>
+
+<script>
+
+function playAudio(audioUrl){
+
+    const modal =
+        document.getElementById("audioModal");
+
+    const player =
+        document.getElementById("audioPlayer");
+
+    player.src = audioUrl;
+
+    player.load();
+
+    player.play();
+
+    modal.style.display = "block";
+
+}
+
+function closeAudio(){
+
+    const modal =
+        document.getElementById("audioModal");
+
+    const player =
+        document.getElementById("audioPlayer");
+
+    player.pause();
+
+    player.currentTime = 0;
+
+    modal.style.display = "none";
+
+}
+
+window.onclick = function(event){
+
+    const modal =
+        document.getElementById("audioModal");
+
+    if(event.target == modal){
+
+        closeAudio();
+
+    }
+
+}
+
+function searchTable(){
+
+    let input =
+        document.getElementById("searchInput");
+
+    let filter =
+        input.value.toLowerCase();
+
+    let table =
+        document.querySelector("table");
+
+    let rows =
+        table.getElementsByTagName("tr");
+
+    for(let i=1;i<rows.length;i++){
+
+        let text =
+            rows[i].innerText.toLowerCase();
+
+        rows[i].style.display =
+            text.includes(filter) ? "" : "none";
+
+    }
+
+}
+
+
+</script>
+
+</body>
+
+</html>

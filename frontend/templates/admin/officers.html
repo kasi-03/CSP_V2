@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Management - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .role-pill {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .role-admin { background: #1e3a8a; color: white; }
+        .role-officer { background: #065f46; color: white; }
+        .role-viewer { background: #4b5563; color: white; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-active { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .status-inactive { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-danger { background: #b91c1c; }
+        .btn-success { background: #15803d; }
+        .btn-secondary { background: #4b5563; }
+
+        .inline-form {
+            display: inline-flex;
+            gap: 5px;
+            margin: 0;
+            align-items: center;
+        }
+
+        .form-select-sm {
+            padding: 4px 6px;
+            font-size: 12px;
+            border: 1px solid #9ca3af;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1 style="margin: 0; text-align: left;">AI Police Complaint Drafting System</h1>
+                <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Personnel Administration & Access Control</p>
+            </div>
+            <div class="auth-status">
+                {% if current_officer %}
+                <span>
+                    <strong>{{ current_officer.full_name }}</strong>
+                    {% if current_officer.badge_number %}(#{{ current_officer.badge_number }}){% endif %}
+                    <span class="role-pill role-{{ current_officer.role }}">{{ current_officer.role }}</span>
+                </span>
+                <form method="POST" action="{{ url_for('auth.logout') }}" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn" style="background: #c53030; padding: 6px 12px; font-size: 13px;">Logout</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <hr>
+        <div class="nav-buttons" style="display: flex; gap: 10px; align-items: center;">
+            <a class="btn" href="{{ url_for('dashboard.dashboard') }}">← Back to Dashboard</a>
+            <a class="btn" href="{{ url_for('admin.create_officer') }}" style="background: #15803d;">+ Add New Officer</a>
+            <a class="btn" href="{{ url_for('admin.audit_logs') }}" style="background: #374151;">Audit Logs</a>
+        </div>
+        <hr>
+
+        <h2>Registered Police Personnel</h2>
+
+        {% if officers %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Badge #</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in officers %}
+                <tr>
+                    <td>{{ o.id }}</td>
+                    <td><strong>{{ o.username }}</strong></td>
+                    <td>{{ o.full_name }}</td>
+                    <td>{{ o.badge_number or '-' }}</td>
+                    <td>
+                        <span class="role-pill role-{{ o.role }}">{{ o.role }}</span>
+                    </td>
+                    <td>
+                        {% if o.is_active %}
+                        <span class="status-badge status-active">Active</span>
+                        {% else %}
+                        <span class="status-badge status-inactive">Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ o.created_at }}</td>
+                    <td>{{ o.last_login or 'Never' }}</td>
+                    <td>
+                        <div class="action-cell">
+                            <!-- Toggle Active Status Form -->
+                            <form method="POST" action="{{ url_for('admin.toggle_officer_status', officer_id=o.id) }}" class="inline-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                {% if o.is_active %}
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to deactivate officer {{ o.username }}?');">Deactivate</button>
+                                {% else %}
+                                <button type="submit" class="btn btn-sm btn-success">Activate</button>
+                                {% endif %}
+                            </form>
+
+                            <!-- Change Role Form -->
+                            <form method="POST" action="{{ url_for('admin.change_officer_role', officer_id=o.id) }}" class="inline-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <select name="role" class="form-select-sm">
+                                    {% for r in allowed_roles %}
+                                    <option value="{{ r }}" {% if o.role == r %}selected{% endif %}>{{ r|upper }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-secondary">Set Role</button>
+                            </form>
+
+                            <!-- Reset Password Trigger -->
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="openResetModal('{{ o.id }}', '{{ o.username }}')">Reset Pwd</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No officers registered.</p>
+        {% endif %}
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="resetModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+        <div style="background: white; width: 380px; margin: 12% auto; padding: 25px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+            <h3 id="resetModalTitle" style="margin-top: 0;">Reset Officer Password</h3>
+            <form id="resetModalForm" method="POST" action="">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div style="margin-bottom: 12px;">
+                    <label for="new_password" style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px;">New Password</label>
+                    <input type="password" id="new_password" name="new_password" required style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #777; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label for="confirm_password" style="display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px;">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #777; border-radius: 4px;">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="closeResetModal()">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-danger">Confirm Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openResetModal(officerId, username) {
+            document.getElementById('resetModalTitle').textContent = 'Reset Password: ' + username;
+            document.getElementById('resetModalForm').action = '/admin/officers/' + officerId + '/reset-password';
+            document.getElementById('resetModal').style.display = 'block';
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
+

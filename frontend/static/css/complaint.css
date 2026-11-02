@@ -1,0 +1,142 @@
+/* Formal Complaint Paper & Print Styles (Telugu and English) */
+
+@font-face {
+    font-family: 'Tiro Telugu';
+    src: url('../fonts/TiroTelugu-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@page {
+    size: A4;
+    margin: 10mm;
+}
+
+body.complaint-view {
+    margin: 0;
+    padding: 15px;
+    background: #bdbdbd;
+}
+
+body.complaint-telugu {
+    font-family: "Noto Sans Telugu", "Tiro Telugu", Arial, sans-serif;
+}
+
+body.complaint-english {
+    font-family: Arial, sans-serif;
+}
+
+.paper {
+    width: 195mm;
+    min-height: 277mm;
+    background: white;
+    margin: auto;
+    padding: 10mm 14mm;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    font-size: 18px;
+    line-height: 1.6;
+    page-break-after: auto;
+}
+
+.top-right {
+    text-align: right;
+    line-height: 1.4;
+}
+
+.station {
+    margin-top: 5mm;
+    line-height: 1.6;
+}
+
+.subject {
+    margin-top: 4mm;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.salutation {
+    margin-top: 3mm;
+    font-weight: bold;
+}
+
+.body {
+    margin-top: 0;
+    margin-bottom: 12px;
+    width: 100%;
+    text-align: justify;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    line-height: 1.8;
+    text-indent: 3em;
+}
+
+.signature {
+    margin-top: 6mm;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.buttons {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.btn-complaint {
+    display: inline-block;
+    margin: 5px;
+    background: black;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.btn-complaint:hover {
+    background: #333;
+}
+
+.case-footer {
+    position: fixed;
+    bottom: 15px;
+    left: 30px;
+    font-size: 11px;
+    color: black;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+
+    body.complaint-view {
+        background: white;
+        padding: 0;
+    }
+
+    .paper {
+        box-shadow: none;
+        margin: 0;
+        width: auto;
+        min-height: auto;
+        padding: 0;
+    }
+
+    .buttons {
+        display: none !important;
+    }
+
+    .case-footer {
+        position: fixed;
+        bottom: 15px;
+        left: 30px;
+    }
+}

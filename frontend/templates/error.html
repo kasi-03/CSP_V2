@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <style>
+        .error-box {
+            background: white;
+            max-width: 650px;
+            margin: 60px auto;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+        .error-title {
+            color: #d32f2f;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #b71c1c;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #d32f2f;
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 20px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="error-box">
+    <h2 class="error-title">⚠ Complaint Processing Notice</h2>
+    <p>The complaint could not be processed at this moment.</p>
+
+    <div class="error-message">
+        <strong>Details:</strong> {{ message }}
+    </div>
+
+    <div style="margin-top: 25px;">
+        <a class="btn" href="/record">Try Again</a>
+        <a class="btn" href="/" style="background: #444; margin-left: 10px;">Return to Dashboard</a>
+    </div>
+</div>
+
+</body>
+</html>

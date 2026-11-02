@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Station Settings - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <h1 style="margin: 0; text-align: left;">AI Police Complaint Drafting System</h1>
+        <div class="auth-status" style="display: flex; align-items: center; gap: 12px;">
+            {% if current_officer %}
+            <span style="font-size: 14px;">
+                <strong>{{ current_officer.full_name }}</strong>
+                {% if current_officer.badge_number %}<span>(#{{ current_officer.badge_number }})</span>{% endif %}
+                <span style="display: inline-block; padding: 2px 8px; background: #333; color: #fff; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase;">{{ current_officer.role }}</span>
+            </span>
+            <form method="POST" action="{{ url_for('auth.logout') }}" style="display: inline; margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn" style="background: #c53030; padding: 6px 12px; font-size: 13px;">Logout</button>
+            </form>
+            {% else %}
+            <a class="btn" href="{{ url_for('auth.login') }}" style="padding: 6px 14px; font-size: 13px;">Officer Login</a>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    <div class="nav-buttons" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <a class="btn" href="/">Dashboard</a>
+        {% if has_permission(current_officer, 'create_complaint') %}
+        <a class="btn" href="/record">Record Complaint</a>
+        {% endif %}
+    </div>
+    <hr>
+
+    <h2>Police Station Settings</h2>
+
+    <form class="settings-form" action="/save_settings" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="station_name">Police Station Name</label>
+        <input
+            type="text"
+            id="station_name"
+            name="station_name"
+            value="{{ station.station_name }}"
+            required
+        >
+
+        <label for="place">Place / Mandal</label>
+        <input
+            type="text"
+            id="place"
+            name="place"
+            value="{{ station.place }}"
+            required
+        >
+
+        <label for="district">District</label>
+        <input
+            type="text"
+            id="district"
+            name="district"
+            value="{{ station.district }}"
+            required
+        >
+
+        <button type="submit">Save Settings</button>
+    </form>
+</div>
+
+</body>
+</html>

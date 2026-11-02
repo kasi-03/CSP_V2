@@ -1,0 +1,73 @@
+/* Record Complaint Page Styles */
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button.action-btn,
+button[type="submit"] {
+    padding: 12px 20px;
+    margin-top: 15px;
+    cursor: pointer;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.2s ease;
+}
+
+button.action-btn:hover,
+button[type="submit"]:hover {
+    background: #333;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+#recordSection {
+    display: block;
+}
+
+#uploadSection {
+    display: none;
+}
+
+audio {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.status {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.timer {
+    font-size: 22px;
+    margin-top: 10px;
+    font-family: monospace;
+}
+
+.radio-group {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}

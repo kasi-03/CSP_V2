@@ -1,0 +1,73 @@
+/* Common Styles & Typography for AI Police Complaint Drafting System */
+
+@font-face {
+    font-family: 'Tiro Telugu';
+    src: url('../fonts/TiroTelugu-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --primary-bg: #f5f5f5;
+    --card-bg: #ffffff;
+    --text-color: #222222;
+    --border-color: #444444;
+    --accent-btn: #000000;
+    --accent-btn-hover: #333333;
+}
+
+body {
+    font-family: Arial, "Noto Sans Telugu", "Tiro Telugu", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--primary-bg);
+    color: var(--text-color);
+}
+
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 40px auto;
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 0;
+    color: #111;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+.nav-buttons {
+    margin: 20px 0;
+}
+
+.btn {
+    display: inline-block;
+    background: var(--accent-btn);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    border: none;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+    text-align: center;
+}
+
+.btn:hover {
+    background: var(--accent-btn-hover);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}

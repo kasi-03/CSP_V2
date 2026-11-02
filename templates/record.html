@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Record Complaint</title>
+
+    <style>
+
+        body{
+
+            font-family: Arial, sans-serif;
+
+            background:#f5f5f5;
+
+            margin:0;
+
+            padding:40px;
+        }
+
+        .container{
+
+            width:95%;
+
+            max-width:1400px;
+
+            margin:40px auto;
+
+            background:white;
+
+            padding:30px;
+
+            border-radius:10px;
+
+            box-shadow:0px 0px 10px rgba(0,0,0,0.2);
+
+            box-sizing:border-box;
+        }
+
+        h1{
+
+            text-align:center;
+        }
+
+        input[type="text"],
+        input[type="file"]{
+
+            width:100%;
+
+            padding:12px;
+
+            margin-top:8px;
+
+            box-sizing:border-box;
+
+            font-size:16px;
+        }
+
+        button{
+
+            padding:10px 18px;
+
+            margin-top:10px;
+
+            cursor:pointer;
+
+            background:black;
+
+            color:white;
+
+            border:none;
+
+            border-radius:5px;
+        }
+
+        .section{
+
+            margin-top:20px;
+        }
+
+        #recordSection{
+
+            display:block;
+        }
+
+        #uploadSection{
+
+            display:none;
+        }
+
+        audio{
+
+            width:100%;
+
+            margin-top:15px;
+        }
+
+        .status{
+
+            margin-top:15px;
+
+            font-weight:bold;
+        }
+
+        .timer{
+
+            font-size:22px;
+
+            margin-top:10px;
+        }
+        .nav-buttons{
+
+            margin:20px 0;
+
+        }
+
+        .btn{
+
+            display:inline-block;
+
+            background:black;
+
+            color:white;
+
+            text-decoration:none;
+
+            padding:12px 20px;
+
+            border-radius:5px;
+
+            margin-right:10px;
+
+            font-size:15px;
+
+            font-weight:bold;
+
+            transition:0.2s;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>
+
+AI Police Complaint Drafting System
+
+</h1>
+
+<hr>
+
+<div class="nav-buttons">
+
+    <a
+        class="btn"
+        href="/"
+    >
+        Dashboard
+    </a>
+
+    <a
+        class="btn"
+        href="/settings"
+    >
+        Location Settings
+    </a>
+
+</div>
+
+<hr>
+
+<form
+action="/process"
+method="POST"
+enctype="multipart/form-data"
+>
+
+<label>
+
+Complainant Name
+
+</label>
+
+<input
+type="text"
+name="complainant_name"
+required
+>
+
+<br><br>
+
+<label>
+
+Phone Number
+
+</label>
+
+<input
+type="text"
+name="phone_number"
+required
+>
+
+<div class="section">
+
+<h3>
+
+Choose Audio Input
+
+</h3>
+
+<label>
+
+<input
+type="radio"
+name="mode"
+value="record"
+checked
+onclick="showRecord()"
+>
+
+Live Recording
+
+</label>
+
+&nbsp;&nbsp;&nbsp;
+
+<label>
+
+<input
+type="radio"
+name="mode"
+value="upload"
+onclick="showUpload()"
+>
+
+Upload Audio
+
+</label>
+
+</div>
+
+<div
+id="recordSection"
+class="section"
+>
+
+<button
+type="button"
+onclick="startRecording()"
+>
+
+🎤 Start Recording
+
+</button>
+
+<button
+type="button"
+onclick="stopRecording()"
+>
+
+⏹ Stop Recording
+
+</button>
+
+<div
+class="status"
+id="status"
+>
+
+Not Recording
+
+</div>
+
+<div
+class="timer"
+id="timer"
+>
+
+00:00
+
+</div>
+
+<audio
+id="player"
+controls
+></audio>
+
+</div>
+
+<div
+id="uploadSection"
+class="section"
+>
+
+<input
+type="file"
+name="audio"
+accept=".wav,.mp3,.m4a,.ogg,.webm,.aac,.flac"
+>
+
+</div>
+
+<input
+    type="file"
+    id="recordedAudio"
+    name="recorded_audio"
+    hidden
+>
+
+<br>
+
+<button
+type="submit"
+>
+
+Generate Complaint
+
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+function showRecord(){
+
+document.getElementById("recordSection").style.display="block";
+
+document.getElementById("uploadSection").style.display="none";
+
+}
+
+function showUpload(){
+
+document.getElementById("recordSection").style.display="none";
+
+document.getElementById("uploadSection").style.display="block";
+
+}
+
+let mediaRecorder;
+
+let chunks=[];
+
+let timer;
+
+let seconds=0;
+
+let stream;
+
+async function startRecording(){
+
+if(mediaRecorder && mediaRecorder.state==="recording"){
+
+return;
+
+}
+
+stream = await navigator.mediaDevices.getUserMedia({
+    audio: true
+});
+
+mediaRecorder=new MediaRecorder(stream);
+
+chunks=[];
+
+mediaRecorder.ondataavailable=e=>{
+
+chunks.push(e.data);
+
+};
+
+mediaRecorder.onstop = () => {
+
+    const blob = new Blob(chunks, {
+        type: "audio/webm"
+    });
+
+    document.getElementById("player").src =
+        URL.createObjectURL(blob);
+
+    // Create a File object from the recording
+    const file = new File(
+        [blob],
+        "recorded.webm",
+        {
+            type: "audio/webm"
+        }
+    );
+
+    // Put the file into the hidden input
+    const dt = new DataTransfer();
+
+    dt.items.add(file);
+
+    document
+        .getElementById("recordedAudio")
+        .files = dt.files;
+
+};
+
+mediaRecorder.start();
+
+document.getElementById("status").innerHTML="🔴 Recording...";
+
+seconds=0;
+
+timer=setInterval(function(){
+
+seconds++;
+
+let m=Math.floor(seconds/60);
+
+let s=seconds%60;
+
+document.getElementById("timer").innerHTML=
+
+String(m).padStart(2,"0")+":"+
+
+String(s).padStart(2,"0");
+
+},1000);
+
+}
+
+function stopRecording(){
+
+    if(!mediaRecorder) return;
+
+    mediaRecorder.stop();
+
+    clearInterval(timer);
+
+    if(stream){
+
+        stream.getTracks().forEach(track => track.stop());
+
+    }
+
+    document.getElementById("status").innerHTML =
+        "✅ Recording Completed";
+
+}
+</script>
+
+</body>
+
+</html>

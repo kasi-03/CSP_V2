@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Complaint (Telugu) - Case {{ case_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/complaint.css') }}">
+    <style>
+        .case-footer {
+            position: fixed;
+            bottom: 15px;
+            left: 30px;
+            font-size: 11px;
+            color: black;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 20mm;
+            }
+
+            .case-footer {
+                position: fixed;
+                bottom: 15px;
+                left: 30px;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            .paper {
+                box-shadow: none !important;
+                margin: 0 !important;
+            }
+
+            .buttons {
+                display: none !important;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        body {
+            margin: 0;
+            padding: 15px;
+            background: #bdbdbd;
+            font-family: "Noto Sans Telugu", "Tiro Telugu", Arial, sans-serif;
+        }
+
+        .paper {
+            width: 190mm;
+            min-height: 277mm;
+            background: white;
+            margin: auto;
+            padding: 10mm 12mm;
+            box-sizing: border-box;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+            font-size: 18px;
+            line-height: 1.6;
+            page-break-after: auto;
+        }
+
+        .top-right {
+            text-align: right;
+            line-height: 1.4;
+        }
+
+        .station {
+            margin-top: 5mm;
+            line-height: 1.6;
+        }
+
+        .subject {
+            margin-top: 4mm;
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .ayya {
+            margin-top: 3mm;
+            font-weight: bold;
+        }
+
+        .body {
+            margin-top: 0;
+            margin-bottom: 12px;
+            width: 100%;
+            text-indent: 3em;
+            text-align: justify;
+            line-height: 1.8;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .signature {
+            margin-top: 5mm;
+            text-align: right;
+            line-height: 1.5;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 5px;
+            background: black;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body class="complaint-view complaint-telugu">
+
+    <div class="paper">
+        <div class="top-right">
+            తేది: {{ current_date }}<br>
+            {{ place_telugu }}, {{ district_telugu }}
+        </div>
+
+        <div class="station">
+            గౌరవనీయులైన<br>
+            ఎస్‌.ఐ గారికి,<br>
+            {{ station_name_telugu }},<br>
+            {{ place_telugu }},<br>
+            {{ district_telugu }}
+        </div>
+
+        <div class="subject">
+            విషయం: {{ subject }}
+        </div>
+
+        <div class="ayya">
+            అయ్యా!
+        </div>
+
+        <div class="body">{{ complaint }}</div>
+
+        <div class="signature">
+            ఇట్లు,<br>
+            ఫిర్యాదుదారు<br>
+            {{ complainant_name }}<br>
+            ఫోన్: {{ phone_number }}
+        </div>
+
+        <div class="buttons">
+            <button class="btn" onclick="window.print()">
+                Download Telugu PDF
+            </button>
+            <a class="btn" href="/view_english/{{ complaint_id }}">
+                View English Translation
+            </a>
+            <a class="btn" href="/">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="case-footer">
+        Case ID : {{ case_name }}
+    </div>
+
+</body>
+</html>

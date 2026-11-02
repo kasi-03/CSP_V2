@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Login - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <style>
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 85vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg, #ffffff);
+            padding: 35px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border: 1.5px solid #333333;
+            box-sizing: border-box;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-header h1 {
+            font-size: 22px;
+            margin-bottom: 6px;
+            color: #111;
+        }
+
+        .login-header p {
+            margin: 0;
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            padding: 12px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #777;
+            border-radius: 5px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            padding-right: 44px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px 8px;
+            font-size: 13px;
+            color: #555;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .toggle-password:hover {
+            color: #000;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .portal-notice {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e5e5;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>AI Police Complaint Drafting System</h1>
+                <p>Authorized Officer Portal</p>
+            </div>
+
+            {% if error %}
+            <div class="alert-error" role="alert">
+                <span class="alert-icon">⚠️</span>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('auth.login') }}" autocomplete="off">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="next" value="{{ next_url or '' }}">
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control"
+                        value="{{ username or '' }}" required autofocus autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" class="form-control"
+                            required autocomplete="current-password">
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">Show</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login">Secure Login</button>
+            </form>
+
+            <div class="portal-notice">
+                Official Law Enforcement System.<br>
+                Unauthorized access is strictly prohibited and subject to legal prosecution.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        if (toggleBtn && passwordInput) {
+            toggleBtn.addEventListener('click', function () {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                toggleBtn.textContent = isPassword ? 'Hide' : 'Show';
+                toggleBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            });
+        }
+    </script>
+</body>
+
+</html>
+

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs - AI Police Complaint Drafting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #f9fafb;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-failed { background: #fee2e2; color: #991b1b; }
+        .badge-denied { background: #fef3c7; color: #92400e; }
+        .badge-blocked { background: #fecdd3; color: #881337; }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1 style="margin: 0; text-align: left;">AI Police Complaint Drafting System</h1>
+                <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Security Audit Log & Activity Trail</p>
+            </div>
+            <div class="auth-status">
+                {% if current_officer %}
+                <span>
+                    <strong>{{ current_officer.full_name }}</strong>
+                    <span style="background: #1e3a8a; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; text-transform: uppercase;">{{ current_officer.role }}</span>
+                </span>
+                <form method="POST" action="{{ url_for('auth.logout') }}" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn" style="background: #c53030; padding: 6px 12px; font-size: 13px;">Logout</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <hr>
+        <div class="nav-buttons" style="display: flex; gap: 10px;">
+            <a class="btn" href="{{ url_for('dashboard.dashboard') }}">← Back to Dashboard</a>
+            <a class="btn" href="{{ url_for('admin.list_officers') }}" style="background: #1e3a8a;">Manage Officers</a>
+        </div>
+        <hr>
+
+        <form method="GET" action="{{ url_for('admin.audit_logs') }}" class="filter-bar">
+            <input type="text" name="action" placeholder="Filter by Action (e.g. LOGIN_FAILED)" value="{{ action_filter }}" class="filter-input">
+            <input type="text" name="username" placeholder="Filter by Username" value="{{ username_filter }}" class="filter-input">
+            <button type="submit" class="btn" style="padding: 7px 14px; font-size: 13px;">Filter Logs</button>
+            {% if action_filter or username_filter %}
+            <a href="{{ url_for('admin.audit_logs') }}" class="btn" style="background: #6b7280; padding: 7px 14px; font-size: 13px;">Clear</a>
+            {% endif %}
+            <span style="margin-left: auto; font-size: 13px; color: #4b5563;">Total entries: <strong>{{ total }}</strong></span>
+        </form>
+
+        {% if logs %}
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50px;">ID</th>
+                    <th style="width: 140px;">Timestamp</th>
+                    <th style="width: 110px;">Username</th>
+                    <th style="width: 100px;">IP Address</th>
+                    <th style="width: 160px;">Action</th>
+                    <th style="width: 140px;">Resource</th>
+                    <th style="width: 80px;">Status</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.id }}</td>
+                    <td>{{ log.timestamp }}</td>
+                    <td><strong>{{ log.username or 'SYSTEM' }}</strong></td>
+                    <td><code>{{ log.ip_address }}</code></td>
+                    <td><code>{{ log.action }}</code></td>
+                    <td>{{ log.resource }}</td>
+                    <td>
+                        {% if log.status == 'SUCCESS' %}
+                        <span class="badge badge-success">SUCCESS</span>
+                        {% elif log.status == 'DENIED' %}
+                        <span class="badge badge-denied">DENIED</span>
+                        {% elif log.status == 'BLOCKED' %}
+                        <span class="badge badge-blocked">BLOCKED</span>
+                        {% else %}
+                        <span class="badge badge-failed">{{ log.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.details }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            <div>
+                Showing page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                {% if page > 1 %}
+                <a href="{{ url_for('admin.audit_logs', page=page-1, action=action_filter, username=username_filter) }}" class="btn" style="padding: 6px 12px; font-size: 13px;">← Previous</a>
+                {% endif %}
+                {% if page < total_pages %}
+                <a href="{{ url_for('admin.audit_logs', page=page+1, action=action_filter, username=username_filter) }}" class="btn" style="padding: 6px 12px; font-size: 13px;">Next →</a>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <p style="padding: 20px; text-align: center; color: #6b7280;">No audit records found matching criteria.</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>
+
