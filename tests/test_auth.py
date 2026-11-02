@@ -92,7 +92,7 @@ class BaseAuthTestCase(unittest.TestCase):
         self,
         username: str = "officer1",
         password: str = "SecurePass123!",
-        full_name: str = "Sub-Inspector Rao",
+        full_name: str = "Test Officer A",
         badge_number: str = "AP-POL-104",
         role: str = "officer",
         is_active: int = 1

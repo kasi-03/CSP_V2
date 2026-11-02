@@ -21,6 +21,14 @@ class Config:
             "A secure, stable SECRET_KEY must be configured in the environment (.env) before starting the application."
         )
 
+    # Environment Detection
+    _is_render = os.getenv("RENDER", "").lower() in ("true", "1")
+    _is_production = (
+        os.getenv("FLASK_ENV") == "production"
+        or os.getenv("ENVIRONMENT") == "production"
+        or _is_render
+    )
+
     # Session Management
     SESSION_TYPE = "filesystem"
     SESSION_FILE_DIR = (os.getenv("SESSION_FILE_DIR") or "").strip() or os.path.join(BASE_DIR, ".flask_session")
@@ -30,7 +38,7 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=60)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
-    SESSION_COOKIE_SECURE = os.getenv("FLASK_ENV") == "production" or os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
+    SESSION_COOKIE_SECURE = _is_production or os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
     SESSION_USE_SIGNER = True
 
     # CSRF Protection
@@ -89,9 +97,7 @@ class Config:
     # Number of trusted upstream proxy hops.
     # On Render (or behind 1 reverse proxy), set to 1 to enable RenderProxyMiddleware.
     # In local development, defaults to 0 so client-supplied forwarded headers are ignored.
-    _is_render = os.getenv("RENDER", "").lower() in ("true", "1")
-    _is_production = os.getenv("FLASK_ENV") == "production" or os.getenv("ENVIRONMENT") == "production"
-    _default_proxies = 1 if (_is_render or _is_production) else 0
+    _default_proxies = 1 if _is_production else 0
     TRUSTED_PROXIES = int(os.getenv("TRUSTED_PROXIES", str(_default_proxies)))
     # X-Forwarded-Proto trust is disabled by default until verified against live Render infrastructure.
     TRUST_FORWARDED_PROTO = os.getenv("TRUST_FORWARDED_PROTO", "false").lower() == "true"

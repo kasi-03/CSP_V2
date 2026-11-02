@@ -298,8 +298,8 @@ class TestComplaintPrivacy(unittest.TestCase):
         # Seed a complaint in the isolated test DB
         cid = save_complaint(
             registered_on="2026-11-02 11:00:00",
-            english_name="Pooja Sharma",
-            telugu_name="పూజా శర్మ",
+            english_name="Test Citizen Alpha",
+            telugu_name="టెస్ట్ సిటిజన్ ఆల్ఫా",
             phone="9876501234",
             subject="Lost Wallet",
             audio_path="audio/test_audio.webm",
@@ -312,14 +312,14 @@ class TestComplaintPrivacy(unittest.TestCase):
         resp_off = officer_client.get(f"/view_english/{cid}")
         self.assertEqual(resp_off.status_code, 200)
         content_off = resp_off.data.decode("utf-8")
-        self.assertIn("Pooja Sharma", content_off)
+        self.assertIn("Test Citizen Alpha", content_off)
         self.assertIn("My wallet was lost near the bus stop", content_off)
         self.assertIn("Case ID", content_off)
 
         viewer_client = self._login_client("viewer_user", "viewer", self.viewer_id)
         resp_view = viewer_client.get(f"/view_english/{cid}")
         self.assertEqual(resp_view.status_code, 200)
-        self.assertIn("Pooja Sharma", resp_view.data.decode("utf-8"))
+        self.assertIn("Test Citizen Alpha", resp_view.data.decode("utf-8"))
 
     def test_09_admin_and_officer_functionality_intact(self):
         """

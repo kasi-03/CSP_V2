@@ -533,9 +533,8 @@ def download_file(complaint_id: int, file_type: str):
               or 'stream' (default: authenticated backend byte streaming)
         download: 'true' (sets Content-Disposition: attachment)
 
-    SECURITY LIMITATION NOTE:
-    The application currently lacks authentication (session/token auth for police personnel).
-    In production, this route MUST be guarded by role-based authentication to protect private citizen records.
+    SECURITY NOTE:
+    Guarded by @require_login: access is restricted to authenticated officers and administrators.
     """
     allowed_types = ("audio", "telugu_pdf", "english_pdf")
     if file_type not in allowed_types:

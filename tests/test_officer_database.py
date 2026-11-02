@@ -90,9 +90,9 @@ class TestOfficerDatabase(unittest.TestCase):
     def test_03_duplicate_username_rejection(self):
         """3. Verify duplicate usernames, including case variations, are rejected."""
         create_officer(
-            username="Officer_Sharma",
+            username="Officer_Alpha",
             password_hash="scrypt:32768:8:1$fakehash123",
-            full_name="Rajesh Sharma",
+            full_name="Test Officer Alpha",
             role="officer",
             db_path=self.db_path
         )
@@ -100,9 +100,9 @@ class TestOfficerDatabase(unittest.TestCase):
         # Exact duplicate
         with self.assertRaises(sqlite3.IntegrityError):
             create_officer(
-                username="Officer_Sharma",
+                username="Officer_Alpha",
                 password_hash="scrypt:32768:8:1$fakehash456",
-                full_name="Another Sharma",
+                full_name="Test Officer Duplicate",
                 role="officer",
                 db_path=self.db_path
             )
@@ -110,18 +110,18 @@ class TestOfficerDatabase(unittest.TestCase):
         # Case-insensitive duplicate (COLLATE NOCASE)
         with self.assertRaises(sqlite3.IntegrityError):
             create_officer(
-                username="OFFICER_SHARMA",
+                username="OFFICER_ALPHA",
                 password_hash="scrypt:32768:8:1$fakehash789",
-                full_name="Another Sharma",
+                full_name="Test Officer Duplicate",
                 role="officer",
                 db_path=self.db_path
             )
 
         with self.assertRaises(sqlite3.IntegrityError):
             create_officer(
-                username="officer_sharma",
+                username="officer_alpha",
                 password_hash="scrypt:32768:8:1$fakehash000",
-                full_name="Another Sharma",
+                full_name="Test Officer Duplicate",
                 role="officer",
                 db_path=self.db_path
             )
@@ -164,7 +164,7 @@ class TestOfficerDatabase(unittest.TestCase):
         officer_id = create_officer(
             username="investigator1",
             password_hash="scrypt:32768:8:1$securehash999",
-            full_name="Venkatesh Rao",
+            full_name="Test Officer Beta",
             role="officer",
             badge_number="AP-POL-4021",
             db_path=self.db_path
@@ -205,7 +205,7 @@ class TestOfficerDatabase(unittest.TestCase):
         officer_id = create_officer(
             username="desk_officer",
             password_hash="scrypt:32768:8:1$fakehash",
-            full_name="Sunil Kumar",
+            full_name="Test Officer Gamma",
             role="officer",
             db_path=self.db_path
         )

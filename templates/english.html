@@ -115,6 +115,8 @@
             line-height:1.8;
 
             text-indent:3em;
+            white-space:pre-wrap;
+            word-break:break-word;
         }
 
         .signature{
@@ -216,7 +218,7 @@
 
         <div class="body">
 
-            {{ english|replace('\n\n', '<div style="height:8px;"></div>')|replace('\n', ' ')|safe }}
+            {{ english }}
 
         </div>
 

@@ -93,7 +93,7 @@ class TestAudioProcessing(unittest.TestCase):
             if p.is_dir():
                 shutil.rmtree(p, ignore_errors=True)
 
-        for p in Path(Config.CASE_RECORDS_FOLDER).glob("**/*Kasi_Rao*01-11-2026*"):
+        for p in Path(Config.CASE_RECORDS_FOLDER).glob("**/*Test_Citizen*"):
             if p.is_dir():
                 shutil.rmtree(p, ignore_errors=True)
 

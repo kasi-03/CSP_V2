@@ -118,6 +118,8 @@
             margin-bottom:12px;
 
             text-indent:3em;
+            white-space:pre-wrap;
+            word-break:break-word;
 
             text-align:justify;
 
@@ -225,7 +227,7 @@
 
         <div class="body">
 
-            {{ complaint|replace('\n\n', '<div style="height:8px;"></div>')|replace('\n', ' ')|safe }}
+            {{ complaint }}
 
 
         </div>

@@ -84,7 +84,7 @@ CSP_V2/
 Create or edit the `.env` file in the project root:
 ```ini
 GROQ_API_KEY=your_actual_groq_api_key_here
-SECRET_KEY=csp-police-drafting-secret-key
+SECRET_KEY=replace-with-a-long-random-secret
 BASE_URL=http://127.0.0.1:5000
 ```
 *(Do not commit `.env` or share API keys.)*
